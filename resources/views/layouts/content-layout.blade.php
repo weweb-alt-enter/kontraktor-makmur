@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Dashboard Content') - Sekawan Makmur</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <style>
+        .sidebar-link {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 1.5rem;
+        }
+        
+        .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+        }
+        
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 60%;
+            background: #FBBF24;
+            border-radius: 0 3px 3px 0;
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    
+    @stack('styles')
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Overlay -->
+        <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/50 z-40 lg:hidden" onclick="closeSidebar()"></div>
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-primary-900 to-primary-800 text-white 
+                                  transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
+            <!-- Logo -->
+            <div class="flex items-center justify-between px-6 h-16 border-b border-white/10 flex-shrink-0">
+                <a href="{{ route('content.dashboard') }}" class="flex items-center space-x-3">
+                    <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-hard-hat text-accent-500"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-heading font-bold leading-tight">Sekawan Makmur</h2>
+                        <p class="text-[10px] text-gray-400">Content Panel</p>
+                    </div>
+                </a>
+                <button onclick="closeSidebar()" class="lg:hidden text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+                <a href="{{ route('content.dashboard') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
+                          {{ request()->routeIs('content.dashboard') ? 'active bg-white/10 text-white' : 'text-gray-300' }}">
+                    <i class="fas fa-tachometer-alt w-5 text-center {{ request()->routeIs('content.dashboard') ? 'text-accent-500' : '' }}"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <div class="pt-4 pb-2">
+                    <p class="px-4 text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Konten Saya</p>
+                </div>
+                
+                <a href="{{ route('content.portofolio.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
+                          {{ request()->routeIs('content.portofolio.*') ? 'active bg-white/10 text-white' : 'text-gray-300' }}">
+                    <i class="fas fa-briefcase w-5 text-center {{ request()->routeIs('content.portofolio.*') ? 'text-accent-500' : '' }}"></i>
+                    <span>Portofolio</span>
+                </a>
+
+                <a href="{{ route('content.inspirasi.index') }}" 
+                    class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
+                        {{ request()->routeIs('content.inspirasi.*') ? 'active bg-white/10 text-white' : 'text-gray-300' }}">
+                    <i class="fas fa-paint-brush w-5 text-center {{ request()->routeIs('content.inspirasi.*') ? 'text-accent-500' : '' }}"></i>
+                    <span>Inspirasi Desain</span>
+                </a>
+                
+                <a href="{{ route('content.blog.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
+                          {{ request()->routeIs('content.blog.*') ? 'active bg-white/10 text-white' : 'text-gray-300' }}">
+                    <i class="fas fa-newspaper w-5 text-center {{ request()->routeIs('content.blog.*') ? 'text-accent-500' : '' }}"></i>
+                    <span>Blog</span>
+                </a>
+                
+                <a href="{{ route('content.testimoni.index') }}" 
+                   class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
+                          {{ request()->routeIs('content.testimoni.*') ? 'active bg-white/10 text-white' : 'text-gray-300' }}">
+                    <i class="fas fa-star w-5 text-center {{ request()->routeIs('content.testimoni.*') ? 'text-accent-500' : '' }}"></i>
+                    <span>Testimoni</span>
+                </a>
+                
+                <div class="pt-4">
+                    <a href="{{ route('home') }}" target="_blank"
+                       class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all text-gray-300">
+                        <i class="fas fa-external-link-alt w-5 text-center"></i>
+                        <span>Lihat Website</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <!-- User Footer -->
+            <div class="border-t border-white/10 p-4 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ Auth::user()->name }}</p>
+                        <p class="text-[10px] text-gray-400">Content Writer</p>
+                    </div>
+                    <form action="{{ route('logout') }}" method="POST" class="flex-shrink-0">
+                        @csrf
+                        <button type="submit" class="text-gray-400 hover:text-red-400 transition-colors p-1" title="Logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto bg-gray-50">
+            <header class="bg-white shadow-sm sticky top-0 z-30">
+                <div class="flex items-center justify-between px-4 lg:px-8 h-16">
+                    <button onclick="openSidebar()" class="lg:hidden text-gray-600 hover:text-primary-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    
+                    <div class="hidden sm:block">
+                        <h1 class="text-lg font-heading font-bold text-gray-800">@yield('title', 'Dashboard')</h1>
+                    </div>
+                    
+                    <div class="relative group">
+                        <button class="flex items-center gap-2 text-sm text-gray-700">
+                            <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-primary-900 text-xs"></i>
+                            </div>
+                            <span class="hidden md:inline font-medium">{{ Auth::user()->name }}</span>
+                        </button>
+                        
+                        <div class="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 min-w-[180px] 
+                                    opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <a href="{{ route('home') }}" target="_blank" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+                                <i class="fas fa-external-link-alt w-5 text-gray-400"></i> Lihat Website
+                            </a>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
+                                    <i class="fas fa-sign-out-alt w-5"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-4 lg:p-8">
+                <x-alert />
+                @yield('content')
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function openSidebar() {
+            document.getElementById('sidebar').classList.remove('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.remove('hidden');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        }
+    </script>
+    
+    @stack('scripts')
+</body>
+</html>
