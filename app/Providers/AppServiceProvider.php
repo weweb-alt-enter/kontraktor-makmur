@@ -17,8 +17,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot()
     {
-        //
+        // Cache query untuk menghindari query berat di cold start
+        \Illuminate\Support\Facades\DB::statement('PRAGMA journal_mode=WAL;');
+        \Illuminate\Support\Facades\DB::statement('PRAGMA synchronous=NORMAL;');
     }
 }
