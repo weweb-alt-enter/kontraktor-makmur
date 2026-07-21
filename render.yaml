@@ -2,39 +2,43 @@ services:
   - type: web
     name: sekawanmakmur
     runtime: image
-    repo: https://github.com/username/sekawanmakmur
+    repo: https://github.com/your-username/your-repo
     plan: free
     branch: main
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
-    buildCommand: |
-      composer install --no-dev --optimize-autoloader
-      npm install && npm run build
-      php artisan config:cache
-      php artisan route:cache
-      php artisan view:cache
-      php artisan storage:link
+    
+    # Environment Variables
     envVars:
+      # Wajib
+      - key: APP_KEY
+        generateValue: true
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
         value: false
-      - key: APP_KEY
-        generateValue: true
       - key: APP_URL
         value: https://sekawanmakmur.onrender.com
+      
+      # Database
       - key: DB_CONNECTION
         value: sqlite
       - key: DB_DATABASE
         value: /var/www/html/database/database.sqlite
+      
+      # Session & Cache
       - key: SESSION_DRIVER
         value: file
       - key: CACHE_DRIVER
         value: file
       - key: QUEUE_CONNECTION
         value: sync
+      
+      # Storage
       - key: FILESYSTEM_DISK
         value: public
+      
+      # Mail (Optional - Gmail)
       - key: MAIL_MAILER
         value: smtp
       - key: MAIL_HOST
@@ -51,6 +55,8 @@ services:
         sync: false
       - key: MAIL_FROM_NAME
         value: "Sekawan Makmur Kontraktor"
+      
+      # Custom (dari .env Anda)
       - key: MAP_EMBED_URL
         value: https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.5!2d112.6!3d-7.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwNTQnMDAuMCJTIDExMsKwMzYnMDAuMCJF!5e0!3m2!1sid!2sid!4v1234567890
       - key: YOUTUBE_HERO_VIDEO_ID

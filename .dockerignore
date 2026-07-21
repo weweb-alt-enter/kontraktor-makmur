@@ -1,35 +1,66 @@
-# Jangan ignore composer.json dan package.json!
-# Hapus atau comment baris yang meng-ignore file penting
+# Environment files
+.env
+.env.*
+!.env.example
 
+# Dependencies
 vendor/
 node_modules/
+
+# Storage
 storage/
 public/storage
 public/hot
-.env
-.env.local
-.env.testing
-.env.production
-.git
-.github
-.gitignore
-.DS_Store
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-.idea
-.vscode
+
+# Database
 database/database.sqlite
 *.sqlite
 *.sqlite-journal
+
+# Version control
+.git
+.github
+.gitignore
+.gitattributes
+
+# IDE & Editor
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log
+yarn-error.log
+
+# Cache
+.phpunit.cache
 .phpunit.result.cache
+composer.lock
+package-lock.json
+
+# Build
 docker-compose.yml
 Dockerfile
 README.md
 note.txt
+
+# Tests
 tests/
-*.log
-.phpunit.cache
-.stubs
+*.test.php
+*.spec.php
+
+# Temporary
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Others
+Homestead.json
+Homestead.yaml
 *.md
