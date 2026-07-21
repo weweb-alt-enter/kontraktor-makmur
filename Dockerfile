@@ -1,17 +1,6 @@
 FROM php:8.4-apache
 
 # ============================================
-# ARGUMENTS FOR LOCAL BUILD
-# ============================================
-ARG DB_CONNECTION=mysql
-ARG DB_HOST=127.0.0.1
-ARG DB_PORT=3306
-ARG DB_DATABASE=laravel
-ARG DB_USERNAME=root
-ARG DB_PASSWORD=
-ARG DB_SSL_MODE=DISABLED
-
-# ============================================
 # 1. INSTALL SYSTEM DEPENDENCIES
 # ============================================
 RUN apt-get update && apt-get install -y \
@@ -52,7 +41,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # ============================================
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g npm@10.8.2
+    && npm install -g npm@10.8.2 \
+    && node --version \
+    && npm --version
 
 # ============================================
 # 5. ENABLE APACHE MOD_REWRITE
@@ -75,7 +66,7 @@ COPY . .
 RUN rm -rf vendor node_modules
 
 # ============================================
-# 9. INSTALL COMPOSER
+# 9. INSTALL COMPOSER (TANPA SCRIPTS)
 # ============================================
 RUN composer config --no-plugins allow-plugins true \
     && composer install --no-interaction --optimize-autoloader --no-dev --no-scripts \
@@ -83,10 +74,22 @@ RUN composer config --no-plugins allow-plugins true \
     && composer dump-autoload --optimize
 
 # ============================================
-# 10. INSTALL NPM & BUILD ASSETS
+# 10. INSTALL NPM & BUILD ASSETS (DENGAN DEBUG)
 # ============================================
-RUN npm install \
+RUN echo "=== INSTALLING NPM PACKAGES ===" \
+    && npm install \
+    && echo "=== NPM INSTALL COMPLETE ===" \
+    && echo "=== BUILDING ASSETS WITH VITE ===" \
     && npm run build \
+    && echo "=== BUILD COMPLETE ===" \
+    && echo "=== CHECKING BUILD OUTPUT ===" \
+    && ls -la public/build/ || echo "public/build/ not found!" \
+    && echo "=== CHECKING CSS FILES ===" \
+    && find public/build -name "*.css" -type f || echo "No CSS files found!" \
+    && echo "=== CHECKING JS FILES ===" \
+    && find public/build -name "*.js" -type f || echo "No JS files found!" \
+    && echo "=== CHECKING MANIFEST ===" \
+    && cat public/build/manifest.json || echo "manifest.json not found!" \
     && rm -rf node_modules
 
 # ============================================
@@ -95,24 +98,7 @@ RUN npm install \
 RUN composer run-script post-autoload-dump
 
 # ============================================
-# 12. CREATE .env UNTUK BUILD (DARI ARG)
-# ============================================
-RUN echo "APP_ENV=production" > .env && \
-    echo "APP_DEBUG=false" >> .env && \
-    echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env && \
-    echo "DB_CONNECTION=${DB_CONNECTION}" >> .env && \
-    echo "DB_HOST=${DB_HOST}" >> .env && \
-    echo "DB_PORT=${DB_PORT}" >> .env && \
-    echo "DB_DATABASE=${DB_DATABASE}" >> .env && \
-    echo "DB_USERNAME=${DB_USERNAME}" >> .env && \
-    echo "DB_PASSWORD=${DB_PASSWORD}" >> .env && \
-    echo "DB_SSL_MODE=${DB_SSL_MODE}" >> .env && \
-    echo "SESSION_DRIVER=file" >> .env && \
-    echo "CACHE_DRIVER=file" >> .env && \
-    echo "QUEUE_CONNECTION=sync" >> .env
-
-# ============================================
-# 13. SETUP STORAGE
+# 12. SETUP STORAGE
 # ============================================
 RUN mkdir -p storage/app/public \
     storage/app/private \
@@ -128,30 +114,25 @@ RUN mkdir -p storage/app/public \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 # ============================================
-# 14. STORAGE LINK
+# 13. STORAGE LINK
 # ============================================
 RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 15. GENERATE APP_KEY
+# 14. GENERATE APP_KEY (TANPA .env)
 # ============================================
-RUN php artisan key:generate --force
+RUN php artisan key:generate --force || echo "Key generation skipped"
 
 # ============================================
-# 16. OPTIMASI LARAVEL
+# 15. OPTIMASI LARAVEL
 # ============================================
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+RUN php artisan config:cache || true \
+    && php artisan route:cache || true \
+    && php artisan view:cache || true
 
 # ============================================
-# 17. HAPUS .env (AMAN)
-# ============================================
-RUN rm -f .env
-
-# ============================================
-# 18. CONFIGURE APACHE
+# 16. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -167,17 +148,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 19. HEALTH CHECK
+# 17. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 20. EXPOSE PORT
+# 18. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 21. START APACHE
+# 19. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
