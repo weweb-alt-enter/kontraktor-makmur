@@ -17,10 +17,16 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
+    public function boot(): void
     {
-        // Cache query untuk menghindari query berat di cold start
-        \Illuminate\Support\Facades\DB::statement('PRAGMA journal_mode=WAL;');
-        \Illuminate\Support\Facades\DB::statement('PRAGMA synchronous=NORMAL;');
+        // HAPUS ATAU KOMENTAR baris ini:
+        // \Illuminate\Support\Facades\DB::statement('PRAGMA journal_mode=WAL;');
+        // \Illuminate\Support\Facades\DB::statement('PRAGMA synchronous=NORMAL;');
+        
+        // Atau ganti dengan ini (hanya jalan di SQLite):
+        // if (config('database.default') === 'sqlite') {
+        //     \Illuminate\Support\Facades\DB::statement('PRAGMA journal_mode=WAL;');
+        //     \Illuminate\Support\Facades\DB::statement('PRAGMA synchronous=NORMAL;');
+        // }
     }
 }
