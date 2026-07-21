@@ -87,6 +87,7 @@ RUN echo "APP_ENV=${APP_ENV}" > .env && \
     echo "APP_DEBUG=${APP_DEBUG}" >> .env && \
     echo "APP_KEY=${APP_KEY}" >> .env && \
     echo "APP_URL=${APP_URL}" >> .env && \
+    echo "ASSET_URL=${APP_URL}" >> .env && \
     echo "DB_CONNECTION=${DB_CONNECTION}" >> .env && \
     echo "DB_HOST=${DB_HOST}" >> .env && \
     echo "DB_PORT=${DB_PORT}" >> .env && \
@@ -97,7 +98,8 @@ RUN echo "APP_ENV=${APP_ENV}" > .env && \
     echo "SESSION_DRIVER=file" >> .env && \
     echo "CACHE_DRIVER=file" >> .env && \
     echo "QUEUE_CONNECTION=sync" >> .env && \
-    echo "FILESYSTEM_DISK=public" >> .env
+    echo "FILESYSTEM_DISK=public" >> .env && \
+    echo "FORCE_HTTPS=true" >> .env
 
 # ============================================
 # 12. RUN POST-AUTOLOAD-DUMP SCRIPTS
@@ -132,24 +134,19 @@ RUN rm -rf public/storage \
 RUN php artisan key:generate --force
 
 # ============================================
-# 16. SHOW ENVIRONMENT (DEBUG)
+# 16. OPTIMASI LARAVEL
 # ============================================
-RUN echo "=== ENVIRONMENT VARIABLES ===" && \
-    cat .env && \
-    echo "=============================="
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
 
 # ============================================
-# 17. TEST DATABASE CONNECTION (DEBUG)
+# 17. HAPUS .env (AMAN)
 # ============================================
-RUN php -r "try { new PDO('mysql:host=${DB_HOST};port=${DB_PORT};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}'); echo 'Database connected successfully!'; } catch (Exception \$e) { echo 'Database error: ' . \$e->getMessage(); }"
+RUN rm -f .env
 
 # ============================================
-# 18. SHOW ROUTES (DEBUG)
-# ============================================
-RUN php artisan route:list || echo "Route list failed"
-
-# ============================================
-# 19. CONFIGURE APACHE
+# 18. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -165,17 +162,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 20. HEALTH CHECK
+# 19. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 21. EXPOSE PORT
+# 20. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 22. START APACHE
+# 21. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
