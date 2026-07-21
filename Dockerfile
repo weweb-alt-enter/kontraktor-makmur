@@ -48,7 +48,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 # ============================================
 # 5. ENABLE APACHE MOD_REWRITE
 # ============================================
-RUN a2enmod rewrite
+RUN a2enmod rewrite headers expires deflate
 
 # ============================================
 # 6. SET WORKING DIRECTORY
@@ -81,33 +81,12 @@ RUN npm install \
     && rm -rf node_modules
 
 # ============================================
-# 11. BUAT .env DARI ENVIRONMENT VARIABLES
-# ============================================
-RUN echo "APP_ENV=${APP_ENV}" > .env && \
-    echo "APP_DEBUG=${APP_DEBUG}" >> .env && \
-    echo "APP_KEY=${APP_KEY}" >> .env && \
-    echo "APP_URL=${APP_URL}" >> .env && \
-    echo "ASSET_URL=${APP_URL}" >> .env && \
-    echo "DB_CONNECTION=${DB_CONNECTION}" >> .env && \
-    echo "DB_HOST=${DB_HOST}" >> .env && \
-    echo "DB_PORT=${DB_PORT}" >> .env && \
-    echo "DB_DATABASE=${DB_DATABASE}" >> .env && \
-    echo "DB_USERNAME=${DB_USERNAME}" >> .env && \
-    echo "DB_PASSWORD=${DB_PASSWORD}" >> .env && \
-    echo "DB_SSL_MODE=${DB_SSL_MODE}" >> .env && \
-    echo "SESSION_DRIVER=file" >> .env && \
-    echo "CACHE_DRIVER=file" >> .env && \
-    echo "QUEUE_CONNECTION=sync" >> .env && \
-    echo "FILESYSTEM_DISK=public" >> .env && \
-    echo "FORCE_HTTPS=true" >> .env
-
-# ============================================
-# 12. RUN POST-AUTOLOAD-DUMP SCRIPTS
+# 11. RUN POST-AUTOLOAD-DUMP SCRIPTS
 # ============================================
 RUN composer run-script post-autoload-dump
 
 # ============================================
-# 13. SETUP STORAGE
+# 12. SETUP STORAGE
 # ============================================
 RUN mkdir -p storage/app/public \
     storage/app/private \
@@ -123,30 +102,26 @@ RUN mkdir -p storage/app/public \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 # ============================================
-# 14. STORAGE LINK
+# 13. STORAGE LINK
 # ============================================
 RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 15. GENERATE APP_KEY
+# 14. GENERATE APP_KEY
 # ============================================
 RUN php artisan key:generate --force
 
 # ============================================
-# 16. OPTIMASI LARAVEL
+# 15. OPTIMASI LARAVEL (TANPA .env)
 # ============================================
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# Jangan jalankan config:cache karena akan mengunci config tanpa .env
+# RUN php artisan config:cache
+RUN php artisan route:cache || true \
+    && php artisan view:cache || true
 
 # ============================================
-# 17. HAPUS .env (AMAN)
-# ============================================
-RUN rm -f .env
-
-# ============================================
-# 18. CONFIGURE APACHE
+# 16. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -162,17 +137,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 19. HEALTH CHECK
+# 17. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 20. EXPOSE PORT
+# 18. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 21. START APACHE
+# 19. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
