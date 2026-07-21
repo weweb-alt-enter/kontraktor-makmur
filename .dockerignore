@@ -40,8 +40,10 @@ yarn-error.log
 # Cache
 .phpunit.cache
 .phpunit.result.cache
-composer.lock
-package-lock.json
+
+# JANGAN ignore composer.lock dan package-lock.json!
+# composer.lock
+# package-lock.json
 
 # Build
 docker-compose.yml
