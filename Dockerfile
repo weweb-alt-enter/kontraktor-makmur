@@ -74,22 +74,15 @@ RUN composer config --no-plugins allow-plugins true \
     && composer dump-autoload --optimize
 
 # ============================================
-# 10. INSTALL NPM & BUILD ASSETS (DENGAN DEBUG)
+# 10. INSTALL NPM & BUILD ASSETS
 # ============================================
 RUN echo "=== INSTALLING NPM PACKAGES ===" \
     && npm install \
-    && echo "=== NPM INSTALL COMPLETE ===" \
     && echo "=== BUILDING ASSETS WITH VITE ===" \
     && npm run build \
     && echo "=== BUILD COMPLETE ===" \
     && echo "=== CHECKING BUILD OUTPUT ===" \
     && ls -la public/build/ || echo "public/build/ not found!" \
-    && echo "=== CHECKING CSS FILES ===" \
-    && find public/build -name "*.css" -type f || echo "No CSS files found!" \
-    && echo "=== CHECKING JS FILES ===" \
-    && find public/build -name "*.js" -type f || echo "No JS files found!" \
-    && echo "=== CHECKING MANIFEST ===" \
-    && cat public/build/manifest.json || echo "manifest.json not found!" \
     && rm -rf node_modules
 
 # ============================================
@@ -120,9 +113,9 @@ RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 14. GENERATE APP_KEY (TANPA .env)
+# 14. GENERATE APP_KEY
 # ============================================
-RUN php artisan key:generate --force || echo "Key generation skipped"
+RUN php artisan key:generate --force
 
 # ============================================
 # 15. OPTIMASI LARAVEL
