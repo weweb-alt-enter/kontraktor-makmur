@@ -81,17 +81,32 @@ RUN echo "=== INSTALLING NPM PACKAGES ===" \
     && echo "=== BUILDING ASSETS WITH VITE ===" \
     && npm run build \
     && echo "=== BUILD COMPLETE ===" \
-    && echo "=== CHECKING BUILD OUTPUT ===" \
-    && ls -la public/build/ || echo "public/build/ not found!" \
     && rm -rf node_modules
 
 # ============================================
-# 11. RUN POST-AUTOLOAD-DUMP SCRIPTS
+# 11. BUAT .env SEMENTARA (PAKAI ENVIRONMENT VARIABLES)
+# ============================================
+RUN echo "APP_ENV=production" > .env && \
+    echo "APP_DEBUG=false" >> .env && \
+    echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env && \
+    echo "DB_CONNECTION=${DB_CONNECTION}" >> .env && \
+    echo "DB_HOST=${DB_HOST}" >> .env && \
+    echo "DB_PORT=${DB_PORT}" >> .env && \
+    echo "DB_DATABASE=${DB_DATABASE}" >> .env && \
+    echo "DB_USERNAME=${DB_USERNAME}" >> .env && \
+    echo "DB_PASSWORD=${DB_PASSWORD}" >> .env && \
+    echo "DB_SSL_MODE=${DB_SSL_MODE}" >> .env && \
+    echo "SESSION_DRIVER=file" >> .env && \
+    echo "CACHE_DRIVER=file" >> .env && \
+    echo "QUEUE_CONNECTION=sync" >> .env
+
+# ============================================
+# 12. RUN POST-AUTOLOAD-DUMP SCRIPTS
 # ============================================
 RUN composer run-script post-autoload-dump
 
 # ============================================
-# 12. SETUP STORAGE
+# 13. SETUP STORAGE
 # ============================================
 RUN mkdir -p storage/app/public \
     storage/app/private \
@@ -107,25 +122,30 @@ RUN mkdir -p storage/app/public \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 # ============================================
-# 13. STORAGE LINK
+# 14. STORAGE LINK
 # ============================================
 RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 14. GENERATE APP_KEY
+# 15. GENERATE APP_KEY
 # ============================================
 RUN php artisan key:generate --force
 
 # ============================================
-# 15. OPTIMASI LARAVEL
+# 16. OPTIMASI LARAVEL
 # ============================================
-RUN php artisan config:cache || true \
-    && php artisan route:cache || true \
-    && php artisan view:cache || true
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
 
 # ============================================
-# 16. CONFIGURE APACHE
+# 17. HAPUS .env (AMAN)
+# ============================================
+RUN rm -f .env
+
+# ============================================
+# 18. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -141,17 +161,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 17. HEALTH CHECK
+# 19. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 18. EXPOSE PORT
+# 20. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 19. START APACHE
+# 21. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
