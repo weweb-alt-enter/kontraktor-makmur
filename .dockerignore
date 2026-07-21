@@ -1,3 +1,6 @@
+# Jangan ignore composer.json dan package.json!
+# Hapus atau comment baris yang meng-ignore file penting
+
 vendor/
 node_modules/
 storage/
@@ -29,4 +32,4 @@ tests/
 *.log
 .phpunit.cache
 .stubs
-*/
+*.md
