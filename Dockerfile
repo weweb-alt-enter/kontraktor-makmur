@@ -88,12 +88,7 @@ RUN echo "APP_ENV=${APP_ENV}" > .env && \
     echo "APP_KEY=${APP_KEY}" >> .env && \
     echo "APP_URL=${APP_URL}" >> .env && \
     echo "DB_CONNECTION=${DB_CONNECTION}" >> .env && \
-    echo "DB_HOST=${DB_HOST}" >> .env && \
-    echo "DB_PORT=${DB_PORT}" >> .env && \
-    echo "DB_DATABASE=${DB_DATABASE}" >> .env && \
-    echo "DB_USERNAME=${DB_USERNAME}" >> .env && \
-    echo "DB_PASSWORD=${DB_PASSWORD}" >> .env && \
-    echo "DB_SSL_MODE=${DB_SSL_MODE}" >> .env && \
+    echo "DB_URL=${DB_URL}" >> .env && \
     echo "SESSION_DRIVER=file" >> .env && \
     echo "CACHE_DRIVER=file" >> .env && \
     echo "QUEUE_CONNECTION=sync" >> .env && \
@@ -106,17 +101,24 @@ RUN echo "APP_ENV=${APP_ENV}" > .env && \
     echo "CLOUDINARY_PREFIX=${CLOUDINARY_PREFIX}" >> .env
 
 # ============================================
-# 12. CLEAR CONFIG SEBELUM CACHE
+# 12. DEBUG - CEK .env
+# ============================================
+RUN echo "=== CHECKING .env ===" && \
+    cat .env && \
+    echo "========================="
+
+# ============================================
+# 13. CLEAR CONFIG SEBELUM CACHE
 # ============================================
 RUN php artisan config:clear
 
 # ============================================
-# 13. RUN POST-AUTOLOAD-DUMP SCRIPTS
+# 14. RUN POST-AUTOLOAD-DUMP SCRIPTS
 # ============================================
 RUN composer run-script post-autoload-dump
 
 # ============================================
-# 14. SETUP STORAGE
+# 15. SETUP STORAGE
 # ============================================
 RUN mkdir -p storage/app/public \
     storage/app/private \
@@ -132,25 +134,25 @@ RUN mkdir -p storage/app/public \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 # ============================================
-# 15. STORAGE LINK
+# 16. STORAGE LINK
 # ============================================
 RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 16. GENERATE APP_KEY
+# 17. GENERATE APP_KEY
 # ============================================
 RUN php artisan key:generate --force
 
 # ============================================
-# 17. OPTIMASI LARAVEL
+# 18. OPTIMASI LARAVEL
 # ============================================
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
 # ============================================
-# 18. CONFIGURE APACHE
+# 19. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -166,17 +168,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 19. HEALTH CHECK
+# 20. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 20. EXPOSE PORT
+# 21. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 21. START APACHE
+# 22. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
