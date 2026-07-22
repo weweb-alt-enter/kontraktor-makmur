@@ -14,7 +14,6 @@ $breadcrumbs = [
         position: relative;
         transition: all 0.2s ease;
     }
-    
     .tab-btn.active::after {
         content: '';
         position: absolute;
@@ -25,25 +24,20 @@ $breadcrumbs = [
         background-color: #1E3A8A;
         border-radius: 3px 3px 0 0;
     }
-    
     .search-highlight {
         background: linear-gradient(180deg, transparent 60%, #FDE68A 60%);
         padding: 0 2px;
     }
-    
     .result-card {
         transition: all 0.3s ease;
     }
-    
     .result-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 12px 30px -10px rgba(30, 58, 138, 0.12);
     }
-    
     .empty-state-icon {
         animation: float 3s ease-in-out infinite;
     }
-    
     @keyframes float {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-10px); }
@@ -52,47 +46,41 @@ $breadcrumbs = [
 @endpush
 
 @section('content')
-<!-- Hero Search -->
 <section class="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 text-white py-12 lg:py-16">
     <div class="absolute inset-0 opacity-10">
         <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M0 0h40v40H0V0zm1 1v38h38V1H1z\'/%3E%3C/g%3E%3C/svg%3E');"></div>
     </div>
-    
     <div class="container mx-auto px-4">
         <x-breadcrumb :breadcrumbs="$breadcrumbs" />
-        
         <div class="max-w-3xl mx-auto mt-6 text-center">
             <h1 class="text-3xl lg:text-4xl font-heading font-bold mb-4">
                 <i class="fas fa-search text-accent-500 mr-3"></i>
                 Pencarian
             </h1>
-            
-            <!-- Search Form -->
             <form action="{{ route('search') }}" method="GET" class="mt-6">
                 <div class="relative max-w-2xl mx-auto">
-                    <input type="text" name="q" value="{{ $query }}" 
-                           placeholder="Cari proyek, artikel, inspirasi, atau testimoni..." 
+                    <input type="text" name="q" value="{{ $query }}"
+                           placeholder="Cari proyek, artikel, inspirasi, atau testimoni..."
                            class="w-full pl-12 pr-24 py-4 rounded-2xl border-0 text-gray-900 text-lg
                                   focus:ring-4 focus:ring-accent-500/30 shadow-xl transition-all"
                            autofocus>
                     <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
                     @if($query)
-                    <a href="{{ route('search') }}" 
+                    <a href="{{ route('search') }}"
                        class="absolute right-24 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif
-                    <button type="submit" 
+                    <button type="submit"
                             class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary-900 text-white px-6 py-2.5 rounded-xl
                                    hover:bg-primary-800 transition font-medium text-sm">
                         Cari
                     </button>
                 </div>
             </form>
-            
             @if($query)
             <p class="text-white/60 mt-3 text-sm">
-                Menampilkan <strong class="text-white">{{ $totalResults }}</strong> hasil untuk: 
+                Menampilkan <strong class="text-white">{{ $totalResults }}</strong> hasil untuk:
                 <strong class="text-white">"{{ $query }}"</strong>
             </p>
             @endif
@@ -102,11 +90,10 @@ $breadcrumbs = [
 
 <div class="container mx-auto px-4 py-8">
     @if($query)
-        <!-- Tabs -->
         @php $activeTab = request('tab', 'portofolio'); @endphp
         <div class="border-b border-gray-200 mb-8 overflow-x-auto">
             <nav class="flex gap-1 md:gap-8 -mb-px whitespace-nowrap">
-                <a href="{{ route('search', ['q' => $query, 'tab' => 'portofolio']) }}" 
+                <a href="{{ route('search', ['q' => $query, 'tab' => 'portofolio']) }}"
                    class="tab-btn {{ $activeTab == 'portofolio' ? 'active' : '' }} pb-4 px-2 text-sm font-medium transition-colors
                           {{ $activeTab == 'portofolio' ? 'text-primary-900' : 'text-gray-500 hover:text-gray-700' }}">
                     <i class="fas fa-briefcase mr-1.5"></i>
@@ -115,8 +102,7 @@ $breadcrumbs = [
                         {{ $portofolios->total() }}
                     </span>
                 </a>
-                
-                <a href="{{ route('search', ['q' => $query, 'tab' => 'blog']) }}" 
+                <a href="{{ route('search', ['q' => $query, 'tab' => 'blog']) }}"
                    class="tab-btn {{ $activeTab == 'blog' ? 'active' : '' }} pb-4 px-2 text-sm font-medium transition-colors
                           {{ $activeTab == 'blog' ? 'text-primary-900' : 'text-gray-500 hover:text-gray-700' }}">
                     <i class="fas fa-newspaper mr-1.5"></i>
@@ -125,8 +111,7 @@ $breadcrumbs = [
                         {{ $blogs->total() }}
                     </span>
                 </a>
-                
-                <a href="{{ route('search', ['q' => $query, 'tab' => 'inspirasi']) }}" 
+                <a href="{{ route('search', ['q' => $query, 'tab' => 'inspirasi']) }}"
                    class="tab-btn {{ $activeTab == 'inspirasi' ? 'active' : '' }} pb-4 px-2 text-sm font-medium transition-colors
                           {{ $activeTab == 'inspirasi' ? 'text-purple-600' : 'text-gray-500 hover:text-gray-700' }}">
                     <i class="fas fa-paint-brush mr-1.5"></i>
@@ -135,8 +120,7 @@ $breadcrumbs = [
                         {{ $inspirasi->total() }}
                     </span>
                 </a>
-                
-                <a href="{{ route('search', ['q' => $query, 'tab' => 'testimoni']) }}" 
+                <a href="{{ route('search', ['q' => $query, 'tab' => 'testimoni']) }}"
                    class="tab-btn {{ $activeTab == 'testimoni' ? 'active' : '' }} pb-4 px-2 text-sm font-medium transition-colors
                           {{ $activeTab == 'testimoni' ? 'text-yellow-600' : 'text-gray-500 hover:text-gray-700' }}">
                     <i class="fas fa-star mr-1.5"></i>
@@ -148,8 +132,6 @@ $breadcrumbs = [
             </nav>
         </div>
 
-        <!-- Tab Content -->
-        {{-- Portofolio Results --}}
         @if($activeTab == 'portofolio')
             @if($portofolios->isNotEmpty())
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -157,8 +139,8 @@ $breadcrumbs = [
                 <div class="result-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
                     <div class="relative h-48 overflow-hidden">
                         @if($portofolio->galleries->isNotEmpty())
-                        <img src="{{ Storage::url($portofolio->galleries->first()->image_path) }}" 
-                             alt="{{ $portofolio->nama_proyek }}" 
+                        <img src="{{ storage_url($portofolio->galleries->first()->image_path) }}"
+                             alt="{{ $portofolio->nama_proyek }}"
                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                              loading="lazy">
                         @else
@@ -182,7 +164,7 @@ $breadcrumbs = [
                             <i class="fas fa-map-marker-alt text-primary-600"></i>
                             {{ Str::limit($portofolio->lokasi, 40) }}
                         </p>
-                        <a href="{{ route('portofolio.detail', $portofolio->slug) }}" 
+                        <a href="{{ route('portofolio.detail', $portofolio->slug) }}"
                            class="inline-flex items-center text-primary-900 hover:text-primary-700 text-sm font-medium">
                             Lihat Detail <i class="fas fa-arrow-right ml-1.5 text-xs"></i>
                         </a>
@@ -202,7 +184,6 @@ $breadcrumbs = [
             @endif
         @endif
 
-        {{-- Blog Results --}}
         @if($activeTab == 'blog')
             @if($blogs->isNotEmpty())
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -210,7 +191,7 @@ $breadcrumbs = [
                 <article class="result-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
                     <div class="relative h-48 overflow-hidden">
                         @if($blog->featured_image)
-                        <img src="{{ Storage::url($blog->featured_image) }}" alt="{{ $blog->judul }}" 
+                        <img src="{{ storage_url($blog->featured_image) }}" alt="{{ $blog->judul }}"
                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         @else
                         <div class="w-full h-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
@@ -238,7 +219,7 @@ $breadcrumbs = [
                             @endforeach
                         </div>
                         @endif
-                        <a href="{{ route('blog.show', $blog->slug) }}" 
+                        <a href="{{ route('blog.show', $blog->slug) }}"
                            class="inline-flex items-center text-primary-900 hover:text-primary-700 text-sm font-medium">
                             Baca Selengkapnya <i class="fas fa-arrow-right ml-1.5 text-xs"></i>
                         </a>
@@ -258,7 +239,6 @@ $breadcrumbs = [
             @endif
         @endif
 
-        {{-- Inspirasi Results --}}
         @if($activeTab == 'inspirasi')
             @if($inspirasi->isNotEmpty())
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -266,7 +246,7 @@ $breadcrumbs = [
                 <div class="result-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
                     <div class="relative h-48 overflow-hidden">
                         @if($item->gambar)
-                        <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}" 
+                        <img src="{{ storage_url($item->gambar) }}" alt="{{ $item->judul }}"
                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                              loading="lazy">
                         @else
@@ -277,7 +257,7 @@ $breadcrumbs = [
                         @if($item->kategori)
                         <div class="absolute top-3 left-3">
                             <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-white/90 backdrop-blur-sm text-purple-700">
-                                {{ $item->kategori->nama_kategori ?? '' }}
+                                {{ $item->kategori }}
                             </span>
                         </div>
                         @endif
@@ -285,7 +265,7 @@ $breadcrumbs = [
                     <div class="p-5">
                         @if($item->konsep)
                         <span class="text-[11px] bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-medium mb-2 inline-block">
-                            {{ $item->konsep->nama_konsep ?? '' }}
+                            {{ $item->konsep }}
                         </span>
                         @endif
                         <h3 class="font-heading font-semibold text-gray-900 mb-2 line-clamp-2">
@@ -294,7 +274,7 @@ $breadcrumbs = [
                             </a>
                         </h3>
                         <p class="text-sm text-gray-500 line-clamp-2 mb-3">{{ $item->deskripsi }}</p>
-                        <a href="{{ route('inspirasi.show', $item->slug) }}" 
+                        <a href="{{ route('inspirasi.show', $item->slug) }}"
                            class="inline-flex items-center text-purple-600 hover:text-purple-800 text-sm font-medium">
                             Lihat Detail <i class="fas fa-arrow-right ml-1.5 text-xs"></i>
                         </a>
@@ -314,7 +294,6 @@ $breadcrumbs = [
             @endif
         @endif
 
-        {{-- Testimoni Results --}}
         @if($activeTab == 'testimoni')
             @if($testimonis->isNotEmpty())
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -322,8 +301,8 @@ $breadcrumbs = [
                 <div class="result-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <div class="flex items-center gap-3 mb-4">
                         @if($testimoni->foto_client)
-                        <img src="{{ Storage::url($testimoni->foto_client) }}" 
-                             alt="{{ $testimoni->nama_client }}" 
+                        <img src="{{ storage_url($testimoni->foto_client) }}"
+                             alt="{{ $testimoni->nama_client }}"
                              class="w-12 h-12 rounded-full object-cover">
                         @else
                         <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center font-semibold text-yellow-700">
@@ -341,7 +320,7 @@ $breadcrumbs = [
                     </div>
                     <p class="text-sm text-gray-600 italic line-clamp-4">"{{ $testimoni->isi_testimoni }}"</p>
                     @if($testimoni->portofolio)
-                    <a href="{{ route('portofolio.detail', $testimoni->portofolio->slug) }}" 
+                    <a href="{{ route('portofolio.detail', $testimoni->portofolio->slug) }}"
                        class="text-xs text-primary-600 hover:underline mt-3 inline-block">
                         <i class="fas fa-link mr-1"></i> {{ $testimoni->portofolio->nama_proyek }}
                     </a>
@@ -360,9 +339,8 @@ $breadcrumbs = [
             <div class="mt-8">{{ $testimonis->appends(['q' => $query, 'tab' => 'testimoni'])->links() }}</div>
             @endif
         @endif
-        
+
     @else
-        <!-- Empty State - No Query -->
         <div class="text-center py-20">
             <div class="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6 empty-state-icon">
                 <i class="fas fa-search text-4xl text-gray-400"></i>
@@ -371,8 +349,6 @@ $breadcrumbs = [
             <p class="text-gray-500 max-w-md mx-auto">
                 Gunakan form pencarian di atas untuk menemukan portofolio, artikel, inspirasi desain, atau testimoni
             </p>
-            
-            <!-- Quick Links -->
             <div class="flex flex-wrap justify-center gap-3 mt-8">
                 <a href="{{ route('portofolio.index') }}" class="px-4 py-2 bg-primary-50 text-primary-700 rounded-xl text-sm font-medium hover:bg-primary-100 transition">
                     <i class="fas fa-briefcase mr-1"></i> Portofolio

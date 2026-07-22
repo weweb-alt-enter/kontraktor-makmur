@@ -3,24 +3,24 @@
 <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
     <div class="relative overflow-hidden">
         @if($portofolio->galleries->isNotEmpty())
-        <img src="{{ Storage::url($portofolio->galleries->first()->image_path) }}" 
-             alt="{{ $portofolio->nama_proyek }}" 
+        <img src="{{ storage_url($portofolio->galleries->first()->image_path) }}"
+             alt="{{ $portofolio->nama_proyek }}"
              class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500">
         @else
         <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
             <i class="fas fa-image text-4xl text-gray-400"></i>
         </div>
         @endif
-        
+
         <div class="absolute top-2 right-2">
-            <span class="px-3 py-1 text-xs font-semibold rounded-full 
+            <span class="px-3 py-1 text-xs font-semibold rounded-full
                 @if($portofolio->status_proyek == 'selesai') bg-green-500 text-white
                 @elseif($portofolio->status_proyek == 'berjalan') bg-yellow-500 text-white
                 @else bg-blue-500 text-white @endif">
                 {{ ucfirst($portofolio->status_proyek) }}
             </span>
         </div>
-        
+
         @if($portofolio->is_featured)
         <div class="absolute top-2 left-2">
             <span class="px-3 py-1 text-xs font-semibold rounded-full bg-accent-500 text-primary-900">
@@ -29,7 +29,7 @@
         </div>
         @endif
     </div>
-    
+
     <div class="p-4">
         <div class="flex items-center space-x-2 mb-2">
             @if($portofolio->jenisLayanan)
@@ -43,11 +43,11 @@
             </span>
             @endif
         </div>
-        
+
         <h3 class="text-lg font-heading font-semibold text-gray-800 mb-2 line-clamp-2">
             {{ $portofolio->nama_proyek }}
         </h3>
-        
+
         <div class="space-y-1 text-sm text-gray-600 mb-3">
             @if($portofolio->lokasi)
             <div class="flex items-center">
@@ -68,8 +68,8 @@
             </div>
             @endif
         </div>
-        
-        <a href="{{ route('portofolio.detail', $portofolio->slug) }}" 
+
+        <a href="{{ route('portofolio.detail', $portofolio->slug) }}"
            class="block w-full text-center bg-primary-900 text-white py-2 rounded-lg hover:bg-primary-800 transition font-medium">
             Lihat Detail
         </a>

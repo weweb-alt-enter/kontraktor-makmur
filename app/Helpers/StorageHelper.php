@@ -21,14 +21,7 @@ class StorageHelper
         $storedPath = Storage::disk($disk)->putFileAs($path, $file, $filename);
         
         // Get URL
-        $url = null;
-        if ($disk === 'cloudinary') {
-            // Cloudinary URL manual
-            $cloudName = config('filesystems.disks.cloudinary.cloud');
-            $url = "https://res.cloudinary.com/{$cloudName}/image/upload/" . $storedPath;
-        } else {
-            $url = Storage::disk($disk)->url($storedPath);
-        }
+        $url = self::getFullUrl($storedPath, $disk);
         
         return [
             'disk' => $disk,
@@ -50,6 +43,47 @@ class StorageHelper
             }
         }
         return $results;
+    }
+
+    /**
+     * Get full URL dari file (support Cloudinary)
+     */
+    public static function getFullUrl($path, $disk = null)
+    {
+        $disk = $disk ?? config('filesystems.default');
+        
+        if (empty($path)) {
+            return null;
+        }
+        
+        try {
+            if ($disk === 'cloudinary') {
+                $cloudName = config('filesystems.disks.cloudinary.cloud');
+                return "https://res.cloudinary.com/{$cloudName}/image/upload/" . $path;
+            }
+            return Storage::disk($disk)->url($path);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get URL dari file dengan transformasi Cloudinary
+     */
+    public static function getOptimizedUrl($path, $width = 800, $height = 600, $disk = null)
+    {
+        $disk = $disk ?? config('filesystems.default');
+        
+        if (empty($path)) {
+            return null;
+        }
+        
+        if ($disk === 'cloudinary') {
+            $cloudName = config('filesystems.disks.cloudinary.cloud');
+            return "https://res.cloudinary.com/{$cloudName}/image/upload/c_fill,w_{$width},h_{$height}/" . $path;
+        }
+        
+        return Storage::disk($disk)->url($path);
     }
 
     /**
@@ -85,28 +119,6 @@ class StorageHelper
         }
         
         return $deleted;
-    }
-
-    /**
-     * Get full URL dari file
-     */
-    public static function getFullUrl($path, $disk = null)
-    {
-        $disk = $disk ?? config('filesystems.default');
-        
-        if (empty($path)) {
-            return null;
-        }
-        
-        try {
-            if ($disk === 'cloudinary') {
-                $cloudName = config('filesystems.disks.cloudinary.cloud');
-                return "https://res.cloudinary.com/{$cloudName}/image/upload/" . $path;
-            }
-            return Storage::disk($disk)->url($path);
-        } catch (\Exception $e) {
-            return null;
-        }
     }
 
     /**
@@ -149,34 +161,5 @@ class StorageHelper
     public static function getCurrentDisk()
     {
         return config('filesystems.default');
-    }
-
-    /**
-     * Get Cloudinary URL dengan opsi transformasi
-     */
-    public static function getCloudinaryUrl($path, $options = [])
-    {
-        if (empty($path)) {
-            return null;
-        }
-
-        $cloudName = config('filesystems.disks.cloudinary.cloud');
-        $url = "https://res.cloudinary.com/{$cloudName}/image/upload/" . $path;
-        
-        // Jika ada opsi transformasi
-        if (!empty($options)) {
-            $transformations = [];
-            foreach ($options as $key => $value) {
-                $transformations[] = $key . '_' . $value;
-            }
-            $transformationString = implode(',', $transformations);
-            
-            $urlParts = explode('/upload/', $url);
-            if (count($urlParts) === 2) {
-                $url = $urlParts[0] . '/upload/' . $transformationString . '/' . $urlParts[1];
-            }
-        }
-        
-        return $url;
     }
 }

@@ -8,7 +8,7 @@
         <h1 class="text-2xl font-heading font-bold text-gray-900">Testimoni</h1>
         <p class="text-gray-500 text-sm mt-1">Kelola testimoni dari klien</p>
     </div>
-    <a href="{{ route('content.testimoni.create') }}" 
+    <a href="{{ route('content.testimoni.create') }}"
        class="inline-flex items-center justify-center gap-2 bg-primary-900 text-white px-5 py-2.5 rounded-xl hover:bg-primary-800 transition font-medium text-sm">
         <i class="fas fa-plus"></i> Tambah Testimoni
     </a>
@@ -20,7 +20,7 @@
         <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-3">
                 @if($testimoni->foto_client)
-                <img src="{{ Storage::url($testimoni->foto_client) }}" class="w-12 h-12 rounded-xl object-cover">
+                <img src="{{ storage_url($testimoni->foto_client) }}" class="w-12 h-12 rounded-xl object-cover">
                 @else
                 <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center font-bold text-primary-900">
                     {{ strtoupper(substr($testimoni->nama_client, 0, 1)) }}
@@ -40,15 +40,15 @@
                 {{ $testimoni->is_published ? 'Live' : 'Draft' }}
             </span>
         </div>
-        
+
         <p class="text-sm text-gray-600 line-clamp-3 mb-3">"{{ $testimoni->isi_testimoni }}"</p>
-        
+
         @if($testimoni->portofolio)
         <p class="text-xs text-primary-600 mb-3">{{ $testimoni->portofolio->nama_proyek }}</p>
         @endif
-        
+
         <div class="flex items-center gap-2 pt-3 border-t border-gray-100">
-            <a href="{{ route('content.testimoni.edit', $testimoni) }}" 
+            <a href="{{ route('content.testimoni.edit', $testimoni) }}"
                class="flex-1 text-center py-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition text-xs font-medium">
                 <i class="fas fa-edit mr-1"></i> Edit
             </a>
@@ -69,7 +69,7 @@
         </div>
         <h3 class="text-lg font-semibold text-gray-600 mb-1">Belum Ada Testimoni</h3>
         <p class="text-sm text-gray-500 mb-4">Tambahkan testimoni dari klien yang puas</p>
-        <a href="{{ route('content.testimoni.create') }}" 
+        <a href="{{ route('content.testimoni.create') }}"
            class="inline-flex items-center gap-2 bg-primary-900 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-800 transition">
             <i class="fas fa-plus"></i> Tambah Testimoni
         </a>

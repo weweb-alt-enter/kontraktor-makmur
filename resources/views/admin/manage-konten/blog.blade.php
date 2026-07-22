@@ -27,7 +27,7 @@
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             @if($blog->featured_image)
-                            <img src="{{ Storage::url($blog->featured_image) }}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0">
+                            <img src="{{ storage_url($blog->featured_image) }}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0">
                             @else
                             <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-newspaper text-gray-400"></i>
@@ -40,18 +40,16 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        {{-- Status Draft/Published --}}
                         <span class="px-2.5 py-1 rounded-full text-xs font-medium
                                     {{ $blog->is_published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
                             {{ $blog->is_published ? 'Published' : 'Draft' }}
                         </span>
                     </td>
                     <td class="px-6 py-4">
-                        {{-- Toggle Publish/Unpublish --}}
                         <form action="{{ route('admin.manage-konten.blog.toggle', $blog) }}" method="POST">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" 
+                            <button type="submit"
                                     class="text-sm font-medium transition-colors
                                            {{ $blog->is_published ? 'text-green-600 hover:text-red-600' : 'text-gray-400 hover:text-green-600' }}"
                                     title="{{ $blog->is_published ? 'Klik untuk unpublish' : 'Klik untuk publish' }}">

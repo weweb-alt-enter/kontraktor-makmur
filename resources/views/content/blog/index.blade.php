@@ -8,7 +8,7 @@
         <h1 class="text-2xl font-heading font-bold text-gray-900">Blog Saya</h1>
         <p class="text-gray-500 text-sm mt-1">Kelola artikel blog yang Anda tulis</p>
     </div>
-    <a href="{{ route('content.blog.create') }}" 
+    <a href="{{ route('content.blog.create') }}"
        class="inline-flex items-center justify-center gap-2 bg-primary-900 text-white px-5 py-2.5 rounded-xl hover:bg-primary-800 transition font-medium text-sm">
         <i class="fas fa-plus"></i> Tulis Blog
     </a>
@@ -48,7 +48,7 @@
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
                             @if($blog->featured_image)
-                            <img src="{{ Storage::url($blog->featured_image) }}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0">
+                            <img src="{{ storage_url($blog->featured_image) }}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0">
                             @else
                             <div class="w-12 h-12 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl flex items-center justify-center flex-shrink-0">
                                 <i class="fas fa-newspaper text-primary-400"></i>
@@ -81,11 +81,11 @@
                     <td class="px-6 py-4 text-sm text-gray-500 hidden xl:table-cell">{{ $blog->created_at->format('d M Y') }}</td>
                     <td class="px-6 py-4">
                         <div class="flex items-center justify-end gap-1">
-                            <a href="{{ route('blog.show', $blog->slug) }}" target="_blank" 
+                            <a href="{{ route('blog.show', $blog->slug) }}" target="_blank"
                                class="w-8 h-8 flex items-center justify-center rounded-lg text-green-600 hover:bg-green-50 transition" title="Lihat">
                                 <i class="fas fa-eye text-sm"></i>
                             </a>
-                            <a href="{{ route('content.blog.edit', $blog) }}" 
+                            <a href="{{ route('content.blog.edit', $blog) }}"
                                class="w-8 h-8 flex items-center justify-center rounded-lg text-blue-600 hover:bg-blue-50 transition" title="Edit">
                                 <i class="fas fa-edit text-sm"></i>
                             </a>
@@ -108,7 +108,7 @@
                         </div>
                         <h3 class="text-lg font-semibold text-gray-600 mb-1">Belum Ada Artikel</h3>
                         <p class="text-sm text-gray-500 mb-4">Mulai tulis artikel blog pertama Anda</p>
-                        <a href="{{ route('content.blog.create') }}" 
+                        <a href="{{ route('content.blog.create') }}"
                            class="inline-flex items-center gap-2 bg-primary-900 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-800 transition">
                             <i class="fas fa-pen"></i> Tulis Blog
                         </a>

@@ -314,7 +314,7 @@
             <div class="grid md:grid-cols-4 gap-8">
                 <div class="md:col-span-1">
                     <div class="flex items-center space-x-3 mb-4">
-                        <img src="{{ asset('images/logo-descrip.png') }}" 
+                        <img src="{{ asset('images/logo.png') }}" 
                              alt="Sekawan Makmur" 
                              class="h-10 w-auto brightness-0 invert"
                              onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center\'><i class=\'fas fa-hard-hat text-accent-500 text-xl\'></i></div>'">

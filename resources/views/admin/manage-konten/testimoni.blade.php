@@ -14,7 +14,7 @@
         <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-3">
                 @if($testimoni->foto_client)
-                <img src="{{ Storage::url($testimoni->foto_client) }}" class="w-12 h-12 rounded-full object-cover">
+                <img src="{{ storage_url($testimoni->foto_client) }}" class="w-12 h-12 rounded-full object-cover">
                 @else
                 <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center font-semibold text-primary-900">
                     {{ strtoupper(substr($testimoni->nama_client, 0, 1)) }}
@@ -30,27 +30,26 @@
                 </div>
             </div>
         </div>
-        
+
         <p class="text-sm text-gray-600 line-clamp-3 mb-4">"{{ $testimoni->isi_testimoni }}"</p>
-        
+
         @if($testimoni->portofolio)
         <a href="{{ route('portofolio.detail', $testimoni->portofolio->slug) }}" target="_blank"
            class="text-xs text-primary-600 hover:underline block mb-4">
             <i class="fas fa-link mr-1"></i> {{ $testimoni->portofolio->nama_proyek }}
         </a>
         @endif
-        
-        {{-- Status & Toggle --}}
+
         <div class="flex items-center justify-between pt-4 border-t border-gray-100">
             <span class="px-2.5 py-1 rounded-full text-xs font-medium
                         {{ $testimoni->is_published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
                 {{ $testimoni->is_published ? '✓ Published' : 'Hidden' }}
             </span>
-            
+
             <form action="{{ route('admin.manage-konten.testimoni.toggle', $testimoni) }}" method="POST">
                 @csrf
                 @method('PATCH')
-                <button type="submit" 
+                <button type="submit"
                         class="text-xs font-medium transition-colors
                                {{ $testimoni->is_published ? 'text-red-500 hover:text-red-700' : 'text-green-600 hover:text-green-700' }}"
                         title="{{ $testimoni->is_published ? 'Unpublish testimoni' : 'Publish testimoni' }}">

@@ -9,7 +9,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .hero-video-wrapper video,
     .hero-video-wrapper iframe {
         position: absolute;
@@ -19,29 +19,28 @@
         height: 100%;
         object-fit: cover;
     }
-    
+
     .inspirasi-card {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
     .inspirasi-card:hover {
         transform: translateY(-8px);
         box-shadow: 0 25px 50px -12px rgba(30, 58, 138, 0.15);
     }
-    
+
     .inspirasi-card:hover .inspirasi-image img {
         transform: scale(1.1);
     }
-    
+
     .inspirasi-image {
         overflow: hidden;
     }
-    
+
     .inspirasi-image img {
         transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Stats Grid Mobile - 3 Columns */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -128,7 +127,6 @@
         }
     }
 
-    /* Portfolio Slider Styles */
     .portfolio-slider-container {
         position: relative;
         overflow: hidden;
@@ -228,7 +226,6 @@
         width: 1.5rem;
     }
 
-    /* View Toggle Styles */
     .view-toggle-container {
         display: flex;
         align-items: center;
@@ -260,7 +257,6 @@
         background: #f3f4f6;
     }
 
-    /* List View Styles */
     .inspirasi-container.grid-view {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -288,7 +284,7 @@
         .inspirasi-container.list-view .inspirasi-card {
             flex-direction: column;
         }
-        
+
         .inspirasi-container.list-view .inspirasi-image {
             width: 100%;
             height: 200px;
@@ -307,13 +303,12 @@
 @section('content')
 <!-- Hero Section -->
 <section class="relative bg-primary-900 text-white overflow-hidden">
-    <!-- Background Pattern -->
     <div class="absolute inset-0 opacity-10">
         <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
     </div>
-    
+
     <div class="absolute inset-0 bg-black/40 z-10"></div>
-    
+
     <div class="relative z-20 container mx-auto px-4 py-16 lg:py-28">
         <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <!-- Hero Content -->
@@ -322,24 +317,24 @@
                     <span class="w-2 h-2 bg-accent-500 rounded-full mr-2 animate-pulse"></span>
                     <span class="text-sm text-white/90">Kontraktor Terpercaya Sejak {{ config('about.established') }}</span>
                 </div>
-                
+
                 <h1 class="text-4xl lg:text-5xl xl:text-6xl font-heading font-bold mb-6 leading-tight">
                     Bangun, Renovasi, & <span class="text-accent-500">Desain</span> Bersama Sekawan Makmur
                 </h1>
-                
+
                 <p class="text-lg lg:text-xl text-gray-200 mb-8 leading-relaxed">
                     Mitra terpercaya untuk mewujudkan properti impian Anda. Profesional, berkualitas, dan tepat waktu dengan pengalaman lebih dari {{ date('Y') - config('about.established') }} tahun.
                 </p>
-                
+
                 <div class="flex flex-wrap gap-4">
-                    <a href="{{ route('portofolio.index') }}" 
+                    <a href="{{ route('portofolio.index') }}"
                        class="group bg-accent-500 text-primary-900 px-8 py-3.5 rounded-xl font-semibold hover:bg-accent-400 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-accent-500/25">
                         <span class="flex items-center">
                             Lihat Portofolio
                             <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </span>
                     </a>
-                    <a href="{{ route('contact') }}" 
+                    <a href="{{ route('contact') }}"
                        class="group border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-white hover:text-primary-900 transition-all duration-300 backdrop-blur-sm">
                         <span class="flex items-center">
                             <i class="fas fa-headset mr-2"></i>
@@ -347,8 +342,7 @@
                         </span>
                     </a>
                 </div>
-                
-                <!-- Trust Indicators -->
+
                 <div class="flex flex-wrap items-center gap-6 mt-10 pt-8 border-t border-white/20">
                     <div class="flex items-center space-x-2">
                         <i class="fas fa-shield-check text-accent-500"></i>
@@ -364,7 +358,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Hero Video/Image -->
             <div class="relative">
                 <div class="aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-black/30 hero-video-wrapper bg-gray-800">
@@ -372,35 +366,33 @@
                         $localVideoPath = public_path('videos/hero-video.mp4');
                         $localVideoExists = file_exists($localVideoPath);
                         $youtubeId = env('YOUTUBE_HERO_VIDEO_ID', 'dQw4w9WgXcQ');
-                        
+
                         if (!$localVideoExists) {
                             $localVideoExists = Storage::disk('public')->exists('videos/hero-video.mp4');
                         }
                     @endphp
-                    
+
                     @if($localVideoExists)
                         <video autoplay muted loop playsinline class="w-full h-full object-cover">
-                            <source src="{{ file_exists(public_path('videos/hero-video.mp4')) ? asset('videos/hero-video.mp4') : Storage::url('videos/hero-video.mp4') }}" type="video/mp4">
+                            <source src="{{ file_exists(public_path('videos/hero-video.mp4')) ? asset('videos/hero-video.mp4') : storage_url('videos/hero-video.mp4') }}" type="video/mp4">
                         </video>
                     @else
-                        <iframe 
-                            src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&loop=1&playlist={{ $youtubeId }}&controls=0&showinfo=0&rel=0&modestbranding=1" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&loop=1&playlist={{ $youtubeId }}&controls=0&showinfo=0&rel=0&modestbranding=1"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen
                             class="w-full h-full">
                         </iframe>
                     @endif
                 </div>
-                
-                <!-- Decorative Elements -->
+
                 <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-accent-500/20 rounded-2xl -z-10"></div>
                 <div class="absolute -top-4 -left-4 w-16 h-16 bg-primary-500/20 rounded-2xl -z-10"></div>
             </div>
         </div>
     </div>
-    
-    <!-- Wave Divider -->
+
     <div class="absolute bottom-0 left-0 right-0 z-20">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" class="w-full h-auto">
             <path fill="#f9fafb" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
@@ -422,11 +414,11 @@
         </div>
         <div>
             <label class="block text-sm font-medium text-text-dark mb-2">Budget Min (Rp)</label>
-            <input type="number" name="budget_min" placeholder="Min budget" 
+            <input type="number" name="budget_min" placeholder="Min budget"
                    class="w-full rounded-lg border-gray-300 focus:border-primary-500 focus:ring-primary-500">
         </div>
         <div class="flex items-end">
-            <button type="submit" 
+            <button type="submit"
                     class="w-full bg-primary-900 text-white py-2.5 rounded-lg hover:bg-primary-800 transition font-medium">
                 <i class="fas fa-search mr-2"></i> Cari Proyek
             </button>
@@ -459,7 +451,7 @@
             <div class="stat-label">Total m² Dibangun</div>
         </div>
     </div>
-    
+
     <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-3xl font-heading font-bold text-primary-900 mb-6 text-center">
             Mengapa Memilih Sekawan Makmur?
@@ -524,13 +516,12 @@
                 Proyek-proyek terbaik yang telah kami selesaikan dengan hasil memuaskan
             </p>
         </div>
-        
-        <!-- Mobile Slider -->
+
         <div class="portfolio-slider-container relative">
             <button class="slider-nav-btn prev" onclick="slidePortfolio('prev')" aria-label="Previous">
                 <i class="fas fa-chevron-left"></i>
             </button>
-            
+
             <div class="portfolio-slider" id="portfolioSlider">
                 @foreach($featuredPortofolio as $portofolio)
                 <div class="portfolio-slide">
@@ -538,17 +529,16 @@
                 </div>
                 @endforeach
             </div>
-            
+
             <button class="slider-nav-btn next" onclick="slidePortfolio('next')" aria-label="Next">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
-        
-        <!-- Slider Dots -->
+
         <div class="slider-dots" id="portfolioDots"></div>
-        
+
         <div class="text-center mt-10">
-            <a href="{{ route('portofolio.index') }}" 
+            <a href="{{ route('portofolio.index') }}"
                class="inline-flex items-center bg-primary-900 text-white px-8 py-3 rounded-xl hover:bg-primary-800 transition font-medium group">
                 Lihat Semua Portofolio
                 <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
@@ -573,8 +563,7 @@
                 Temukan ide dan inspirasi untuk mewujudkan rumah impian Anda dengan desain terkini
             </p>
         </div>
-        
-        <!-- View Toggle Buttons -->
+
         <div class="view-toggle-container">
             <button class="view-toggle-btn active" onclick="toggleView('grid')" id="gridViewBtn">
                 <i class="fas fa-th-large"></i>
@@ -586,34 +575,31 @@
             </button>
         </div>
     </div>
-    
+
     <div class="inspirasi-container grid-view" id="inspirasiContainer">
         @foreach($latestInspirasi as $item)
         <article class="inspirasi-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
-            <!-- Image -->
             <div class="inspirasi-image relative h-52 overflow-hidden">
                 @if($item->gambar)
-                <img src="{{ Storage::url($item->gambar) }}" alt="{{ $item->judul }}" 
+                <img src="{{ storage_url($item->gambar) }}" alt="{{ $item->judul }}"
                      class="w-full h-full object-cover" loading="lazy">
                 @else
                 <div class="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
                     <i class="fas fa-paint-brush text-5xl text-purple-300"></i>
                 </div>
                 @endif
-                
-                <!-- Overlay on hover -->
-                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent 
+
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent
                             opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="absolute bottom-4 left-4 right-4">
-                        <a href="{{ route('inspirasi.show', $item->slug) }}" 
+                        <a href="{{ route('inspirasi.show', $item->slug) }}"
                            class="block w-full bg-white text-primary-900 text-center py-2.5 rounded-xl font-semibold
                                   hover:bg-accent-500 transition-all duration-200 transform hover:scale-105 text-sm">
                             <i class="fas fa-eye mr-2"></i> Lihat Detail
                         </a>
                     </div>
                 </div>
-                
-                <!-- Kategori Badge -->
+
                 @if($item->kategori)
                 <div class="absolute top-3 left-3">
                     <span class="bg-white/90 backdrop-blur-sm text-primary-900 text-xs px-3 py-1.5 rounded-full font-medium shadow-lg">
@@ -622,30 +608,29 @@
                 </div>
                 @endif
             </div>
-            
-            <!-- Content -->
+
             <div class="p-5">
                 @if($item->konsep)
                 <span class="text-[11px] bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full font-medium mb-3 inline-block">
                     {{ $item->konsep }}
                 </span>
                 @endif
-                
+
                 <h3 class="text-lg font-heading font-bold text-text-dark mb-2 line-clamp-2 group-hover:text-primary-900 transition-colors">
                     <a href="{{ route('inspirasi.show', $item->slug) }}">{{ $item->judul }}</a>
                 </h3>
-                
+
                 @if($item->deskripsi)
                 <p class="text-sm text-text line-clamp-2 mb-4">{{ $item->deskripsi }}</p>
                 @endif
-                
+
                 <div class="flex items-center justify-between pt-3 border-t border-gray-100">
                     @if($item->warna_dominan)
                     <span class="text-xs text-text flex items-center gap-1">
                         <i class="fas fa-palette text-purple-500"></i> {{ $item->warna_dominan }}
                     </span>
                     @endif
-                    
+
                     @if($item->estimasi_biaya)
                     <span class="text-xs text-text">
                         Rp {{ number_format($item->estimasi_biaya, 0, ',', '.') }}/m²
@@ -656,9 +641,9 @@
         </article>
         @endforeach
     </div>
-    
+
     <div class="text-center mt-10">
-        <a href="{{ route('inspirasi.index') }}" 
+        <a href="{{ route('inspirasi.index') }}"
            class="inline-flex items-center bg-primary-900 text-white px-8 py-3 rounded-xl hover:bg-primary-800 transition font-medium group">
             Lihat Semua Inspirasi
             <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
@@ -673,7 +658,7 @@
         <div class="absolute -top-20 -right-20 w-64 h-64 bg-accent-500 rounded-full"></div>
         <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-accent-500 rounded-full"></div>
     </div>
-    
+
     <div class="container mx-auto px-4 text-center relative z-10">
         <h2 class="text-3xl lg:text-4xl font-heading font-bold mb-4">
             Siap Mewujudkan Proyek Impian Anda?
@@ -682,12 +667,12 @@
             Hubungi kami sekarang untuk konsultasi GRATIS dan dapatkan penawaran terbaik
         </p>
         <div class="flex flex-wrap justify-center gap-4">
-            <a href="https://wa.me/{{ config('app.wa_number', '6281234567890') }}?text={{ urlencode('Halo, saya ingin konsultasi tentang proyek bangunan') }}" 
+            <a href="https://wa.me/{{ config('app.wa_number', '6281234567890') }}?text={{ urlencode('Halo, saya ingin konsultasi tentang proyek bangunan') }}"
                target="_blank"
                class="bg-green-500 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-green-600 transition transform hover:scale-105 shadow-lg shadow-green-500/20">
                 <i class="fab fa-whatsapp mr-2"></i> Chat via WhatsApp
             </a>
-            <a href="{{ route('contact') }}" 
+            <a href="{{ route('contact') }}"
                class="bg-accent-500 text-primary-900 px-8 py-3.5 rounded-xl font-semibold hover:bg-accent-400 transition transform hover:scale-105 shadow-lg shadow-accent-500/20">
                 <i class="fas fa-envelope mr-2"></i> Hubungi Kami
             </a>
@@ -698,76 +683,83 @@
 
 @push('scripts')
 <script>
-    // Portfolio Slider Functionality
     let currentSlide = 0;
-    
+
     function initPortfolioSlider() {
         const slider = document.getElementById('portfolioSlider');
+        if (!slider) return;
+
         const slides = slider.children;
         const dotsContainer = document.getElementById('portfolioDots');
-        
-        // Create dots
+        if (!dotsContainer) return;
+
         dotsContainer.innerHTML = '';
         const slideCount = Math.ceil(slides.length / getSlidesPerView());
-        
+
         for (let i = 0; i < slideCount; i++) {
             const dot = document.createElement('div');
             dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
             dot.onclick = () => goToSlide(i);
             dotsContainer.appendChild(dot);
         }
-        
-        // Update dots on scroll
+
         slider.addEventListener('scroll', updateDots);
     }
-    
+
     function getSlidesPerView() {
         if (window.innerWidth >= 1024) return 3;
         if (window.innerWidth >= 640) return 2;
         return 1;
     }
-    
+
     function slidePortfolio(direction) {
         const slider = document.getElementById('portfolioSlider');
+        if (!slider || !slider.children.length) return;
+
         const slideWidth = slider.children[0].offsetWidth;
-        const gap = 16; // 1rem gap
+        const gap = 16;
         const scrollAmount = slideWidth + gap;
-        
+
         if (direction === 'next') {
             slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         } else {
             slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
         }
     }
-    
+
     function goToSlide(index) {
         const slider = document.getElementById('portfolioSlider');
+        if (!slider || !slider.children.length) return;
+
         const slideWidth = slider.children[0].offsetWidth;
         const gap = 16;
         const scrollAmount = (slideWidth + gap) * index * getSlidesPerView();
-        
+
         slider.scrollTo({ left: scrollAmount, behavior: 'smooth' });
     }
-    
+
     function updateDots() {
         const slider = document.getElementById('portfolioSlider');
+        if (!slider || !slider.children.length) return;
+
         const slideWidth = slider.children[0].offsetWidth;
         const gap = 16;
         const scrollPosition = slider.scrollLeft;
         const activeIndex = Math.round(scrollPosition / ((slideWidth + gap) * getSlidesPerView()));
-        
+
         const dots = document.querySelectorAll('.slider-dot');
         dots.forEach((dot, index) => {
             dot.classList.toggle('active', index === activeIndex);
         });
     }
-    
-    // View Toggle Functionality
+
     function toggleView(viewType) {
         const container = document.getElementById('inspirasiContainer');
         const gridBtn = document.getElementById('gridViewBtn');
         const listBtn = document.getElementById('listViewBtn');
-        
+
+        if (!container || !gridBtn || !listBtn) return;
+
         if (viewType === 'grid') {
             container.classList.remove('list-view');
             container.classList.add('grid-view');
@@ -782,17 +774,13 @@
             localStorage.setItem('inspirasiView', 'list');
         }
     }
-    
-    // Initialize on page load
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize portfolio slider
         initPortfolioSlider();
-        
-        // Restore view preference
+
         const savedView = localStorage.getItem('inspirasiView') || 'grid';
         toggleView(savedView);
-        
-        // Update slider on resize
+
         window.addEventListener('resize', initPortfolioSlider);
     });
 </script>
