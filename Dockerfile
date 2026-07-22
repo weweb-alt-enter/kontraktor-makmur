@@ -106,28 +106,20 @@ RUN echo "APP_ENV=${APP_ENV}" > .env && \
     echo "CLOUDINARY_PREFIX=${CLOUDINARY_PREFIX}" >> .env
 
 # ============================================
-# 12. HAPUS SEMUA CACHE FILE
+# 12. HAPUS SEMUA CACHE FILE SECARA MANUAL
 # ============================================
-RUN rm -rf bootstrap/cache/config.php \
-    && rm -rf bootstrap/cache/packages.php \
-    && rm -rf bootstrap/cache/services.php \
-    && rm -rf storage/framework/cache/data/*
+RUN rm -rf bootstrap/cache/*.php \
+    && rm -rf storage/framework/cache/data/* \
+    && rm -rf storage/framework/views/* \
+    && rm -rf storage/framework/sessions/*
 
 # ============================================
-# 13. CLEAR CONFIG
-# ============================================
-RUN php artisan config:clear \
-    && php artisan cache:clear \
-    && php artisan view:clear \
-    && php artisan route:clear
-
-# ============================================
-# 14. RUN POST-AUTOLOAD-DUMP SCRIPTS
+# 13. RUN POST-AUTOLOAD-DUMP SCRIPTS
 # ============================================
 RUN composer run-script post-autoload-dump
 
 # ============================================
-# 15. SETUP STORAGE
+# 14. SETUP STORAGE
 # ============================================
 RUN mkdir -p storage/app/public \
     storage/app/private \
@@ -143,24 +135,24 @@ RUN mkdir -p storage/app/public \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 # ============================================
-# 16. STORAGE LINK
+# 15. STORAGE LINK
 # ============================================
 RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 17. GENERATE APP_KEY
+# 16. GENERATE APP_KEY
 # ============================================
 RUN php artisan key:generate --force
 
 # ============================================
-# 18. OPTIMASI LARAVEL (TANPA CONFIG CACHE)
+# 17. OPTIMASI LARAVEL (TANPA CONFIG CACHE)
 # ============================================
-RUN php artisan route:cache \
-    && php artisan view:cache
+RUN php artisan route:cache || true \
+    && php artisan view:cache || true
 
 # ============================================
-# 19. CONFIGURE APACHE
+# 18. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -176,17 +168,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 20. HEALTH CHECK
+# 19. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 21. EXPOSE PORT
+# 20. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 22. START APACHE
+# 21. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
