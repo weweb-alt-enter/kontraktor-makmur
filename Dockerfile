@@ -81,7 +81,7 @@ RUN npm install \
     && rm -rf node_modules
 
 # ============================================
-# 11. BUAT .env SEMENTARA DARI ENVIRONMENT VARIABLES
+# 11. BUAT .env DARI ENVIRONMENT VARIABLES
 # ============================================
 RUN echo "APP_ENV=${APP_ENV}" > .env && \
     echo "APP_DEBUG=${APP_DEBUG}" >> .env && \
@@ -133,7 +133,7 @@ RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 15. GENERATE APP_KEY (JIKA BELUM ADA)
+# 15. GENERATE APP_KEY (JIKA PERLU)
 # ============================================
 RUN php artisan key:generate --force
 
@@ -145,9 +145,9 @@ RUN php artisan config:cache \
     && php artisan view:cache
 
 # ============================================
-# 17. HAPUS .env (AMAN)
+# 17. JANGAN HAPUS .env!
 # ============================================
-RUN rm -f .env
+# RUN rm -f .env  <-- COMMENT! Biarkan .env tetap ada
 
 # ============================================
 # 18. CONFIGURE APACHE
