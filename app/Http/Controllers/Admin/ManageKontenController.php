@@ -18,7 +18,7 @@ class ManageKontenController extends Controller
         $portofolios = PortofolioProyek::with(['jenisLayanan', 'jenisBangunan', 'creator'])
             ->latest()
             ->paginate(10);
-        
+
         return view('admin.manage-konten.portofolio', compact('portofolios'));
     }
 
@@ -35,7 +35,7 @@ class ManageKontenController extends Controller
     public function unpublishPortofolio(PortofolioProyek $portofolio)
     {
         $newStatus = $portofolio->status_proyek == 'selesai' ? 'direncanakan' : 'selesai';
-        
+
         $portofolio->update([
             'status_proyek' => $newStatus
         ]);
@@ -50,7 +50,7 @@ class ManageKontenController extends Controller
         $blogs = Blog::with('creator')
             ->latest()
             ->paginate(10);
-        
+
         return view('admin.manage-konten.blog', compact('blogs'));
     }
 
@@ -71,7 +71,7 @@ class ManageKontenController extends Controller
         $testimonis = Testimoni::with('portofolio')
             ->latest()
             ->paginate(12);
-        
+
         return view('admin.manage-konten.testimoni', compact('testimonis'));
     }
 
@@ -88,10 +88,10 @@ class ManageKontenController extends Controller
     // === INSPIRASI DESAIN ===
     public function inspirasi()
     {
-        $inspirasi = InspirasiDesain::with('creator')
+        $inspirasi = InspirasiDesain::with(['creator', 'kategori', 'konsep'])
             ->latest()
             ->paginate(12);
-        
+
         return view('admin.manage-konten.inspirasi', compact('inspirasi'));
     }
 

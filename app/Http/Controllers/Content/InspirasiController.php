@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use App\Models\InspirasiDesain;
 use App\Models\InspirasiDesainGallery;
+use App\Helpers\StorageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -40,33 +41,28 @@ class InspirasiController extends Controller
             ],
             'deskripsi' => 'nullable|string',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'kategori' => 'nullable|string|max:100',
-            'konsep' => 'nullable|string|max:100',
+            'kategori_id' => 'nullable|exists:kategori_inspirasi,id',
+            'konsep_id' => 'nullable|exists:konsep_inspirasi,id',
             'warna_dominan' => 'nullable|string|max:200',
             'estimasi_biaya' => 'nullable|integer|min:0',
             'tags' => 'nullable|string|max:255',
             'is_published' => 'boolean',
             'galleries.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'gallery_captions.*' => 'nullable|string|max:255',
-        ], [
-            'judul.required' => 'Judul wajib diisi.',
-            'gambar.image' => 'File harus berupa gambar.',
-            'gambar.max' => 'Ukuran gambar maksimal 5MB.',
-            'galleries.*.image' => 'File harus berupa gambar.',
-            'galleries.*.max' => 'Ukuran gambar maksimal 5MB.',
         ]);
 
         $validated['slug'] = Str::slug($validated['judul']);
         $validated['created_by'] = auth()->id();
         $validated['is_published'] = $request->boolean('is_published');
-        
+
         if ($validated['is_published']) {
             $validated['published_at'] = now();
         }
 
-        // Handle featured image
+        // Handle featured image with flexible storage
         if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $request->file('gambar')->store('inspirasi', 'public');
+            $uploaded = StorageHelper::upload($request->file('gambar'), 'inspirasi');
+            $validated['gambar'] = $uploaded['path'];
         }
 
         $inspirasi = InspirasiDesain::create($validated);
@@ -75,11 +71,11 @@ class InspirasiController extends Controller
         if ($request->hasFile('galleries')) {
             foreach ($request->file('galleries') as $index => $image) {
                 if ($image && $image->isValid()) {
-                    $path = $image->store('inspirasi/' . $inspirasi->id, 'public');
+                    $uploaded = StorageHelper::upload($image, 'inspirasi/' . $inspirasi->id);
                     
                     InspirasiDesainGallery::create([
                         'inspirasi_id' => $inspirasi->id,
-                        'image_path' => $path,
+                        'image_path' => $uploaded['path'],
                         'caption' => $request->gallery_captions[$index] ?? null,
                         'sort_order' => $index,
                     ]);
@@ -121,8 +117,8 @@ class InspirasiController extends Controller
             ],
             'deskripsi' => 'nullable|string',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-            'kategori' => 'nullable|string|max:100',
-            'konsep' => 'nullable|string|max:100',
+            'kategori_id' => 'nullable|exists:kategori_inspirasi,id',
+            'konsep_id' => 'nullable|exists:konsep_inspirasi,id',
             'warna_dominan' => 'nullable|string|max:200',
             'estimasi_biaya' => 'nullable|integer|min:0',
             'tags' => 'nullable|string|max:255',
@@ -137,7 +133,7 @@ class InspirasiController extends Controller
 
         $wasPublished = $inspirasi->is_published;
         $validated['is_published'] = $request->boolean('is_published');
-        
+
         if ($validated['is_published'] && !$wasPublished) {
             $validated['published_at'] = now();
         }
@@ -145,22 +141,26 @@ class InspirasiController extends Controller
             $validated['published_at'] = null;
         }
 
+        // Handle featured image
         if ($request->hasFile('gambar')) {
-            if ($inspirasi->gambar && Storage::disk('public')->exists($inspirasi->gambar)) {
-                Storage::disk('public')->delete($inspirasi->gambar);
+            if ($inspirasi->gambar) {
+                StorageHelper::delete($inspirasi->gambar);
             }
-            $validated['gambar'] = $request->file('gambar')->store('inspirasi', 'public');
+            $uploaded = StorageHelper::upload($request->file('gambar'), 'inspirasi');
+            $validated['gambar'] = $uploaded['path'];
         }
 
         $inspirasi->update($validated);
 
+        // Handle new gallery images
         if ($request->hasFile('galleries')) {
             foreach ($request->file('galleries') as $index => $image) {
                 if ($image && $image->isValid()) {
-                    $path = $image->store('inspirasi/' . $inspirasi->id, 'public');
+                    $uploaded = StorageHelper::upload($image, 'inspirasi/' . $inspirasi->id);
+                    
                     InspirasiDesainGallery::create([
                         'inspirasi_id' => $inspirasi->id,
-                        'image_path' => $path,
+                        'image_path' => $uploaded['path'],
                         'caption' => $request->gallery_captions[$index] ?? null,
                         'sort_order' => $inspirasi->galleries()->count(),
                     ]);
@@ -178,16 +178,15 @@ class InspirasiController extends Controller
             abort(403);
         }
 
-        if ($inspirasi->gambar && Storage::disk('public')->exists($inspirasi->gambar)) {
-            Storage::disk('public')->delete($inspirasi->gambar);
+        // Delete featured image
+        if ($inspirasi->gambar) {
+            StorageHelper::delete($inspirasi->gambar);
         }
 
+        // Delete gallery images
         foreach ($inspirasi->galleries as $gallery) {
-            if (Storage::disk('public')->exists($gallery->image_path)) {
-                Storage::disk('public')->delete($gallery->image_path);
-            }
+            StorageHelper::delete($gallery->image_path);
         }
-        Storage::disk('public')->deleteDirectory('inspirasi/' . $inspirasi->id);
 
         $inspirasi->delete();
 
@@ -201,9 +200,7 @@ class InspirasiController extends Controller
             abort(403);
         }
 
-        if (Storage::disk('public')->exists($gallery->image_path)) {
-            Storage::disk('public')->delete($gallery->image_path);
-        }
+        StorageHelper::delete($gallery->image_path);
         $gallery->delete();
 
         return response()->json(['success' => true]);

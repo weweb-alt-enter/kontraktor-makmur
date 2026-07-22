@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use App\Models\Testimoni;
 use App\Models\PortofolioProyek;
+use App\Helpers\StorageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,9 +42,10 @@ class TestimoniController extends Controller
 
         $validated['is_published'] = $request->boolean('is_published');
 
+        // Handle photo with flexible storage
         if ($request->hasFile('foto_client')) {
-            $validated['foto_client'] = $request->file('foto_client')
-                ->store('testimoni', 'public');
+            $uploaded = StorageHelper::upload($request->file('foto_client'), 'testimoni');
+            $validated['foto_client'] = $uploaded['path'];
         }
 
         Testimoni::create($validated);
@@ -74,12 +76,13 @@ class TestimoniController extends Controller
 
         $validated['is_published'] = $request->boolean('is_published');
 
+        // Handle photo
         if ($request->hasFile('foto_client')) {
             if ($testimoni->foto_client) {
-                Storage::disk('public')->delete($testimoni->foto_client);
+                StorageHelper::delete($testimoni->foto_client);
             }
-            $validated['foto_client'] = $request->file('foto_client')
-                ->store('testimoni', 'public');
+            $uploaded = StorageHelper::upload($request->file('foto_client'), 'testimoni');
+            $validated['foto_client'] = $uploaded['path'];
         }
 
         $testimoni->update($validated);
@@ -91,7 +94,7 @@ class TestimoniController extends Controller
     public function destroy(Testimoni $testimoni)
     {
         if ($testimoni->foto_client) {
-            Storage::disk('public')->delete($testimoni->foto_client);
+            StorageHelper::delete($testimoni->foto_client);
         }
 
         $testimoni->delete();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Helpers\StorageHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -43,24 +44,20 @@ class BlogController extends Controller
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'tags' => 'nullable|string|max:255',
             'is_published' => 'boolean',
-        ], [
-            'judul.required' => 'Judul artikel wajib diisi.',
-            'judul.max' => 'Judul maksimal 255 karakter.',
-            'konten.required' => 'Konten artikel wajib diisi.',
-            'featured_image.image' => 'File harus berupa gambar.',
-            'featured_image.max' => 'Ukuran gambar maksimal 5MB.',
         ]);
 
         $validated['slug'] = Str::slug($validated['judul']);
         $validated['created_by'] = auth()->id();
         $validated['is_published'] = $request->boolean('is_published');
-        
+
         if ($validated['is_published']) {
             $validated['published_at'] = now();
         }
 
+        // Handle featured image with flexible storage
         if ($request->hasFile('featured_image')) {
-            $validated['featured_image'] = $request->file('featured_image')->store('blog', 'public');
+            $uploaded = StorageHelper::upload($request->file('featured_image'), 'blog');
+            $validated['featured_image'] = $uploaded['path'];
         }
 
         Blog::create($validated);
@@ -94,7 +91,7 @@ class BlogController extends Controller
                     $exists = Blog::where('slug', $slug)
                         ->where('id', '!=', $blog->id)
                         ->exists();
-                    
+
                     if ($exists) {
                         $fail('Judul artikel "' . $value . '" sudah digunakan oleh artikel lain. Silakan gunakan judul yang berbeda.');
                     }
@@ -105,32 +102,32 @@ class BlogController extends Controller
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'tags' => 'nullable|string|max:255',
             'is_published' => 'boolean',
-        ], [
-            'judul.required' => 'Judul artikel wajib diisi.',
-            'konten.required' => 'Konten artikel wajib diisi.',
         ]);
 
-        // Update slug jika judul berubah
         if ($blog->judul !== $validated['judul']) {
             $validated['slug'] = Str::slug($validated['judul']);
         }
-        
+
         $wasPublished = $blog->is_published;
         $validated['is_published'] = $request->boolean('is_published');
-        
+
         if ($validated['is_published'] && !$wasPublished) {
             $validated['published_at'] = now();
         }
-        
+
         if (!$validated['is_published']) {
             $validated['published_at'] = null;
         }
 
+        // Handle featured image
         if ($request->hasFile('featured_image')) {
-            if ($blog->featured_image && Storage::disk('public')->exists($blog->featured_image)) {
-                Storage::disk('public')->delete($blog->featured_image);
+            // Delete old image
+            if ($blog->featured_image) {
+                StorageHelper::delete($blog->featured_image);
             }
-            $validated['featured_image'] = $request->file('featured_image')->store('blog', 'public');
+            
+            $uploaded = StorageHelper::upload($request->file('featured_image'), 'blog');
+            $validated['featured_image'] = $uploaded['path'];
         }
 
         $blog->update($validated);
@@ -146,7 +143,7 @@ class BlogController extends Controller
         }
 
         if ($blog->featured_image) {
-            Storage::disk('public')->delete($blog->featured_image);
+            StorageHelper::delete($blog->featured_image);
         }
 
         $blog->delete();
