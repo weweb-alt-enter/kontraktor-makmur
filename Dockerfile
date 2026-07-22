@@ -56,7 +56,7 @@ RUN a2enmod rewrite headers expires deflate
 WORKDIR /var/www/html
 
 # ============================================
-# 7. COPY SEMUA FILE
+# 7. COPY SEMUA FILE (TANPA .env)
 # ============================================
 COPY . .
 
@@ -108,19 +108,17 @@ RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 14. GENERATE APP_KEY
+# 14. OPTIMASI LARAVEL (TANPA .env)
 # ============================================
-RUN php artisan key:generate --force
+# SKIP key:generate karena APP_KEY sudah di Render
+# RUN php artisan key:generate --force
 
-# ============================================
-# 15. OPTIMASI LARAVEL
-# ============================================
 RUN php artisan config:cache || true \
     && php artisan route:cache || true \
     && php artisan view:cache || true
 
 # ============================================
-# 16. CONFIGURE APACHE
+# 15. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -136,17 +134,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 17. HEALTH CHECK
+# 16. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 18. EXPOSE PORT
+# 17. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 19. START APACHE
+# 18. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
