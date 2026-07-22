@@ -106,12 +106,24 @@ RUN echo "APP_ENV=${APP_ENV}" > .env && \
     echo "CLOUDINARY_PREFIX=${CLOUDINARY_PREFIX}" >> .env
 
 # ============================================
-# 12. RUN POST-AUTOLOAD-DUMP SCRIPTS
+# 12. DEBUG - CEK .env
+# ============================================
+RUN echo "=== CHECKING .env ===" && \
+    cat .env && \
+    echo "========================="
+
+# ============================================
+# 13. CLEAR CONFIG SEBELUM CACHE
+# ============================================
+RUN php artisan config:clear
+
+# ============================================
+# 14. RUN POST-AUTOLOAD-DUMP SCRIPTS
 # ============================================
 RUN composer run-script post-autoload-dump
 
 # ============================================
-# 13. SETUP STORAGE
+# 15. SETUP STORAGE
 # ============================================
 RUN mkdir -p storage/app/public \
     storage/app/private \
@@ -127,30 +139,37 @@ RUN mkdir -p storage/app/public \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 # ============================================
-# 14. STORAGE LINK
+# 16. STORAGE LINK
 # ============================================
 RUN rm -rf public/storage \
     && php artisan storage:link
 
 # ============================================
-# 15. GENERATE APP_KEY (JIKA PERLU)
+# 17. GENERATE APP_KEY
 # ============================================
 RUN php artisan key:generate --force
 
 # ============================================
-# 16. OPTIMASI LARAVEL
+# 18. OPTIMASI LARAVEL
 # ============================================
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
 # ============================================
-# 17. JANGAN HAPUS .env!
+# 19. DEBUG - CEK CONFIG
+# ============================================
+RUN echo "=== CHECKING CONFIG ===" && \
+    php artisan tinker --execute="echo config('database.default');" && \
+    echo "========================="
+
+# ============================================
+# 20. JANGAN HAPUS .env!
 # ============================================
 # RUN rm -f .env  <-- COMMENT! Biarkan .env tetap ada
 
 # ============================================
-# 18. CONFIGURE APACHE
+# 21. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -166,17 +185,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 19. HEALTH CHECK
+# 22. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 20. EXPOSE PORT
+# 23. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 21. START APACHE
+# 24. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
