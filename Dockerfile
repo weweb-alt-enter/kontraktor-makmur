@@ -157,19 +157,12 @@ RUN php artisan config:cache \
     && php artisan view:cache
 
 # ============================================
-# 19. DEBUG - CEK CONFIG
-# ============================================
-RUN echo "=== CHECKING CONFIG ===" && \
-    php artisan tinker --execute="echo config('database.default');" && \
-    echo "========================="
-
-# ============================================
-# 20. JANGAN HAPUS .env!
+# 19. JANGAN HAPUS .env!
 # ============================================
 # RUN rm -f .env  <-- COMMENT! Biarkan .env tetap ada
 
 # ============================================
-# 21. CONFIGURE APACHE
+# 20. CONFIGURE APACHE
 # ============================================
 RUN echo '<VirtualHost *:8080>\n\
     DocumentRoot /var/www/html/public\n\
@@ -185,17 +178,17 @@ RUN echo '<VirtualHost *:8080>\n\
 RUN sed -i 's/Listen 80/Listen 8080/g' /etc/apache2/ports.conf
 
 # ============================================
-# 22. HEALTH CHECK
+# 21. HEALTH CHECK
 # ============================================
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 # ============================================
-# 23. EXPOSE PORT
+# 22. EXPOSE PORT
 # ============================================
 EXPOSE 8080
 
 # ============================================
-# 24. START APACHE
+# 23. START APACHE
 # ============================================
 CMD ["apache2-foreground"]
