@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,6 +15,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // ============================================
+        // FORCE HTTPS UNTUK PRODUCTION
+        // ============================================
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+
         // Hanya jalankan jika menggunakan SQLite
         if (config('database.default') === 'sqlite') {
             try {
@@ -23,5 +31,7 @@ class AppServiceProvider extends ServiceProvider
                 // Ignore
             }
         }
+
+        date_default_timezone_set('Asia/Jakarta');
     }
 }
