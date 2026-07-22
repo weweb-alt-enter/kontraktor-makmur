@@ -494,7 +494,7 @@ $breadcrumbs = [
                         </div>
                         <div>
                             <h3 class="font-semibold text-text-dark mb-1">Alamat Kantor</h3>
-                            <p class="text-sm text-text">Jl. Konstruksi No. 123<br>Surabaya, Jawa Timur 60264</p>
+                            <p class="text-sm text-text">Jl. Konstruksi No. 123<br>Solo, Jawa Tengah 57168</p>
                         </div>
                     </div>
                 </div>

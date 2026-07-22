@@ -365,7 +365,7 @@
                 <div>
                     <h4 class="font-heading font-semibold mb-4 text-accent-500">Hubungi Kami</h4>
                     <ul class="space-y-3 text-sm text-text-light">
-                        <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt mt-1 text-accent-500"></i><span>Jl. Konstruksi No. 123, Surabaya, Jawa Timur 60264</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt mt-1 text-accent-500"></i><span>Jl. Konstruksi No. 123, Solo, Jawa Tengah 57168</span></li>
                         <li class="flex items-center gap-3"><i class="fas fa-phone text-accent-500"></i><span>+62 {{ config('app.wa_number', '812-3456-7890') }}</span></li>
                         <li class="flex items-center gap-3"><i class="fas fa-envelope text-accent-500"></i><span>info@sekawanmakmur.com</span></li>
                         <li class="flex items-center gap-3"><i class="fas fa-clock text-accent-500"></i><span>Senin - Jumat, 08:00 - 17:00 WIB</span></li>
